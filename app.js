@@ -112,10 +112,6 @@ new Vue({
     // 打开添加平台弹窗
     openAddPlatformDialog: function() {
       this.showDialog = true;
-      this.$nextTick(function() {
-        var dialog = document.getElementById('nativeDialog');
-        if (dialog) dialog.showModal();
-      });
     },
 
     // 初始化
@@ -156,8 +152,7 @@ new Vue({
     // 关闭弹窗
     closeDialog: function() {
       this.showDialog = false;
-      var dialog = document.getElementById('nativeDialog');
-      if (dialog) dialog.close();
+      this.selectedPlatform = '';
     },
 
     // 删除平台

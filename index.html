@@ -9,10 +9,12 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f5f7fa; min-height: 100vh; }
 
-    /* 原生dialog弹窗样式 */
-    dialog { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border: none; border-radius: 8px; padding: 24px; background: #fff; box-shadow: 0 4px 24px rgba(0,0,0,0.15); z-index: 1000; min-width: 400px; }
-    dialog::backdrop { background: rgba(0,0,0,0.45); }
-    dialog h3 { font-size: 18px; font-weight: 500; margin-bottom: 20px; color: #262626; }
+    /* 弹窗遮罩层 */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+    /* 弹窗内容 */
+    .modal-content { background: #fff; border-radius: 8px; padding: 24px; box-shadow: 0 4px 24px rgba(0,0,0,0.15); min-width: 400px; }
+    .modal-content h3 { font-size: 18px; font-weight: 500; margin-bottom: 20px; color: #262626; }
+    .platform-options { display: flex; flex-wrap: wrap; gap: 10px; }
 
     /* 全局顶部导航栏 */
     .global-nav { height: 56px; background: #fff; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; position: sticky; top: 0; z-index: 200; }
@@ -405,41 +407,27 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- 平台选择弹窗 -->
-    <dialog id="nativeDialog">
-      <h3>选择平台</h3>
-      <div>
-        <span
-          v-for="option in availablePlatforms"
-          :key="option.value"
-          :class="['platform-option', { selected: selectedPlatform === option.value, used: option.used }]"
-          @click="!option.used && (selectedPlatform = option.value)"
-        >
-          {{ option.label }}
-        </span>
+      <!-- 平台选择弹窗 -->
+      <div id="nativeDialog" class="modal-overlay" v-if="showDialog" @click.self="closeDialog">
+        <div class="modal-content">
+        <h3>选择平台</h3>
+        <div class="platform-options">
+          <span
+            v-for="option in availablePlatforms"
+            :key="option.value"
+            :class="['platform-option', { selected: selectedPlatform === option.value, used: option.used }]"
+            @click="!option.used && (selectedPlatform = option.value)"
+          >
+            {{ option.label }}
+          </span>
+        </div>
+        <div style="margin-top:20px;text-align:right;">
+          <el-button @click="closeDialog">取消</el-button>
+          <el-button type="primary" @click="addPlatform(selectedPlatform)" :disabled="!selectedPlatform">确定</el-button>
+        </div>
       </div>
-      <div style="margin-top:20px;text-align:right;">
-        <el-button @click="closeDialog">取消</el-button>
-        <el-button type="primary" @click="addPlatform(selectedPlatform)">确定</el-button>
-      </div>
-    </dialog>
-      <div>
-        <span
-          v-for="option in availablePlatforms"
-          :key="option.value"
-          :class="['platform-option', { selected: selectedPlatform === option.value, used: option.used }]"
-          @click="!option.used && (selectedPlatform = option.value)"
-        >
-          {{ option.label }}
-        </span>
-      </div>
-      <div slot="footer">
-        <el-button @click="showDialog = false">取消</el-button>
-        <el-button type="primary" @click="addPlatform(selectedPlatform)" :disabled="!selectedPlatform">确定</el-button>
-      </div>
-    </el-dialog>
+    </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/element-ui@2.15.14/lib/index.js"></script>
