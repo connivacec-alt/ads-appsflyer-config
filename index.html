@@ -9,6 +9,11 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f5f7fa; min-height: 100vh; }
 
+    /* 原生dialog弹窗样式 */
+    dialog { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border: none; border-radius: 8px; padding: 24px; background: #fff; box-shadow: 0 4px 24px rgba(0,0,0,0.15); z-index: 1000; min-width: 400px; }
+    dialog::backdrop { background: rgba(0,0,0,0.45); }
+    dialog h3 { font-size: 18px; font-weight: 500; margin-bottom: 20px; color: #262626; }
+
     /* 全局顶部导航栏 */
     .global-nav { height: 56px; background: #fff; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; position: sticky; top: 0; z-index: 200; }
     .global-nav-left { display: flex; align-items: center; gap: 32px; }
@@ -289,19 +294,9 @@
                     </el-popconfirm>
                   </div>
                 </div>
-                <div class="add-platform-row" @click="showDropdown = !showDropdown">
+                <div class="add-platform-row" id="addPlatformBtn" onclick="vueApp.openAddPlatformDialog()">
                   <span class="add-platform-icon">+</span>
                   <span class="add-platform-text">添加平台</span>
-                  <div class="add-platform-dropdown" v-if="showDropdown" @click.stop>
-                    <div
-                      v-for="option in availablePlatforms"
-                      :key="option.value"
-                      :class="['add-platform-option', { used: option.used }]"
-                      @click="!option.used && addPlatform(option.value)"
-                    >
-                      {{ option.label }}
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -413,7 +408,23 @@
     </div>
 
     <!-- 平台选择弹窗 -->
-    <el-dialog title="选择平台" :visible.sync="showDialog" width="400px">
+    <dialog id="nativeDialog">
+      <h3>选择平台</h3>
+      <div>
+        <span
+          v-for="option in availablePlatforms"
+          :key="option.value"
+          :class="['platform-option', { selected: selectedPlatform === option.value, used: option.used }]"
+          @click="!option.used && (selectedPlatform = option.value)"
+        >
+          {{ option.label }}
+        </span>
+      </div>
+      <div style="margin-top:20px;text-align:right;">
+        <el-button @click="closeDialog">取消</el-button>
+        <el-button type="primary" @click="addPlatform(selectedPlatform)">确定</el-button>
+      </div>
+    </dialog>
       <div>
         <span
           v-for="option in availablePlatforms"
@@ -426,7 +437,7 @@
       </div>
       <div slot="footer">
         <el-button @click="showDialog = false">取消</el-button>
-        <el-button type="primary" @click="addPlatform" :disabled="!selectedPlatform">确定</el-button>
+        <el-button type="primary" @click="addPlatform(selectedPlatform)" :disabled="!selectedPlatform">确定</el-button>
       </div>
     </el-dialog>
   </div>

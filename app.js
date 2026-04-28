@@ -109,6 +109,15 @@ new Vue({
   },
 
   methods: {
+    // 打开添加平台弹窗
+    openAddPlatformDialog: function() {
+      this.showDialog = true;
+      this.$nextTick(function() {
+        var dialog = document.getElementById('nativeDialog');
+        if (dialog) dialog.showModal();
+      });
+    },
+
     // 初始化
     init: function() {
       var self = this;
@@ -141,6 +150,14 @@ new Vue({
         });
       }
       this.showDropdown = false;
+      this.closeDialog();
+    },
+
+    // 关闭弹窗
+    closeDialog: function() {
+      this.showDialog = false;
+      var dialog = document.getElementById('nativeDialog');
+      if (dialog) dialog.close();
     },
 
     // 删除平台
@@ -265,6 +282,7 @@ new Vue({
 
   mounted: function() {
     this.init();
+    window.vueApp = this;
     var self = this;
     document.addEventListener('click', function(e) {
       if (!e.target.closest('.add-platform-row')) {
